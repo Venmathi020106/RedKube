@@ -1,0 +1,33 @@
+flowchart LR
+  %% RedKube configuration relationship graph
+  n0["Pod/redkube-demo"]
+  n1["ClusterRole/redkube-demo-wildcard-role"]
+  n2["Wildcard permission: WildcardPermission/redkube-demo-wildcard-role/0"]
+  n3["ClusterRoleBinding/redkube-demo-admin-binding"]
+  n4["ClusterRole/cluster-admin"]
+  n5["ServiceAccount/default/default"]
+  n6["MEDIUM RK-POD-001"]
+  n7["HIGH RK-CTR-001"]
+  n8["HIGH RK-CTR-002"]
+  n9["HIGH RK-CTR-003"]
+  n10["LOW RK-CTR-004"]
+  n11["LOW RK-CTR-006"]
+  n12["HIGH RK-RBAC-001"]
+  n13["HIGH RK-RBAC-002"]
+  n14["CRITICAL RK-RBAC-003"]
+  n15["MEDIUM RK-RBAC-004"]
+  n0 -->|HAS FINDING| n6
+  n0 -->|HAS FINDING| n7
+  n0 -->|HAS FINDING| n8
+  n0 -->|HAS FINDING| n9
+  n0 -->|HAS FINDING| n10
+  n0 -->|HAS FINDING| n11
+  n1 -->|GRANTS WILDCARD PERMISSION| n2
+  n1 -->|HAS FINDING| n12
+  n1 -->|HAS FINDING| n13
+  n3 -->|REFERENCES ROLE| n4
+  n3 -->|HAS FINDING| n14
+  n3 -->|HAS FINDING| n15
+  n5 -->|SUBJECT OF BINDING| n3
+
+  %% Potential paths are hypotheses for review, not proof of exploitation.

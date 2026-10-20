@@ -1,0 +1,117 @@
+{
+  "target": "examples",
+  "files_scanned": 2,
+  "findings": [
+    {
+      "rule_id": "RK-RBAC-003",
+      "severity": "CRITICAL",
+      "resource": "ClusterRoleBinding/redkube-demo-admin-binding",
+      "message": "ClusterRoleBinding grants the cluster-admin role.",
+      "evidence": "roleRef references ClusterRole/cluster-admin",
+      "remediation": "Review every subject and remove cluster-wide administrator access unless explicitly required.",
+      "file": "examples/risky-rbac.yaml",
+      "document": "2",
+      "risk_score": 100
+    },
+    {
+      "rule_id": "RK-CTR-001",
+      "severity": "HIGH",
+      "resource": "Pod/redkube-demo",
+      "message": "Container demo-container is privileged.",
+      "evidence": "containers[demo-container].securityContext.privileged is true",
+      "remediation": "Disable privileged mode unless there is a documented, tightly controlled need.",
+      "file": "examples/risky-pod.yaml",
+      "document": "1",
+      "risk_score": 75
+    },
+    {
+      "rule_id": "RK-CTR-002",
+      "severity": "HIGH",
+      "resource": "Pod/redkube-demo",
+      "message": "Container demo-container allows privilege escalation.",
+      "evidence": "containers[demo-container].securityContext.allowPrivilegeEscalation is true",
+      "remediation": "Set allowPrivilegeEscalation: false where compatible.",
+      "file": "examples/risky-pod.yaml",
+      "document": "1",
+      "risk_score": 75
+    },
+    {
+      "rule_id": "RK-CTR-003",
+      "severity": "HIGH",
+      "resource": "Pod/redkube-demo",
+      "message": "Container demo-container explicitly runs as root.",
+      "evidence": "containers[demo-container].securityContext.runAsUser is 0",
+      "remediation": "Use a dedicated non-root user and verify application compatibility.",
+      "file": "examples/risky-pod.yaml",
+      "document": "1",
+      "risk_score": 75
+    },
+    {
+      "rule_id": "RK-RBAC-001",
+      "severity": "HIGH",
+      "resource": "ClusterRole/redkube-demo-wildcard-role",
+      "message": "RBAC rule contains wildcard permissions.",
+      "evidence": "rules[0] has wildcard values in: verbs, resources, apiGroups",
+      "remediation": "Replace wildcard permissions with the minimum required verbs, resources, and API groups.",
+      "file": "examples/risky-rbac.yaml",
+      "document": "1",
+      "risk_score": 75
+    },
+    {
+      "rule_id": "RK-RBAC-002",
+      "severity": "HIGH",
+      "resource": "ClusterRole/redkube-demo-wildcard-role",
+      "message": "RBAC rule allows all verbs on all resources.",
+      "evidence": "rules[0] contains verbs=['*'] and resources=['*']",
+      "remediation": "Restrict both verbs and resources to the specific operations required.",
+      "file": "examples/risky-rbac.yaml",
+      "document": "1",
+      "risk_score": 75
+    },
+    {
+      "rule_id": "RK-POD-001",
+      "severity": "MEDIUM",
+      "resource": "Pod/redkube-demo",
+      "message": "Non-root execution is not explicitly required.",
+      "evidence": "spec.securityContext.runAsNonRoot is not true",
+      "remediation": "Set runAsNonRoot: true and configure a compatible non-root user.",
+      "file": "examples/risky-pod.yaml",
+      "document": "1",
+      "risk_score": 50
+    },
+    {
+      "rule_id": "RK-RBAC-004",
+      "severity": "MEDIUM",
+      "resource": "ClusterRoleBinding/redkube-demo-admin-binding",
+      "message": "A binding references the default service account.",
+      "evidence": "Subject is ServiceAccount/default; namespace=default",
+      "remediation": "Consider a dedicated service account with narrowly scoped permissions.",
+      "file": "examples/risky-rbac.yaml",
+      "document": "2",
+      "risk_score": 50
+    },
+    {
+      "rule_id": "RK-CTR-004",
+      "severity": "LOW",
+      "resource": "Pod/redkube-demo",
+      "message": "Container demo-container does not explicitly use a read-only root filesystem.",
+      "evidence": "containers[demo-container].securityContext.readOnlyRootFilesystem is not true",
+      "remediation": "Enable readOnlyRootFilesystem: true where the application permits it.",
+      "file": "examples/risky-pod.yaml",
+      "document": "1",
+      "risk_score": 25
+    },
+    {
+      "rule_id": "RK-CTR-006",
+      "severity": "LOW",
+      "resource": "Pod/redkube-demo",
+      "message": "Container demo-container lacks an explicit CPU or memory limit.",
+      "evidence": "containers[demo-container].resources.limits does not specify both cpu and memory",
+      "remediation": "Define appropriate CPU and memory limits based on workload testing.",
+      "file": "examples/risky-pod.yaml",
+      "document": "1",
+      "risk_score": 25
+    }
+  ],
+  "errors": []
+}

@@ -1,0 +1,214 @@
+{
+  "target": "examples",
+  "nodes": [
+    {
+      "id": "Pod/redkube-demo",
+      "kind": "Pod",
+      "name": "redkube-demo",
+      "namespace": "",
+      "source": "examples/risky-pod.yaml",
+      "node_type": "resource"
+    },
+    {
+      "id": "ClusterRole/redkube-demo-wildcard-role",
+      "kind": "ClusterRole",
+      "name": "redkube-demo-wildcard-role",
+      "namespace": "",
+      "source": "examples/risky-rbac.yaml",
+      "node_type": "resource"
+    },
+    {
+      "id": "WildcardPermission/redkube-demo-wildcard-role/0",
+      "node_type": "permission",
+      "verbs": [
+        "*"
+      ],
+      "resources": [
+        "*"
+      ],
+      "apiGroups": [
+        "*"
+      ]
+    },
+    {
+      "id": "ClusterRoleBinding/redkube-demo-admin-binding",
+      "kind": "ClusterRoleBinding",
+      "name": "redkube-demo-admin-binding",
+      "namespace": "",
+      "source": "examples/risky-rbac.yaml",
+      "node_type": "resource"
+    },
+    {
+      "id": "ClusterRole/cluster-admin",
+      "kind": "ClusterRole",
+      "name": "cluster-admin",
+      "node_type": "referenced_resource"
+    },
+    {
+      "id": "ServiceAccount/default/default",
+      "kind": "ServiceAccount",
+      "name": "default",
+      "namespace": "default",
+      "node_type": "identity"
+    },
+    {
+      "id": "Finding/RK-POD-001/1",
+      "node_type": "finding",
+      "rule_id": "RK-POD-001",
+      "severity": "MEDIUM",
+      "message": "Non-root execution is not explicitly required.",
+      "risk_score": 50
+    },
+    {
+      "id": "Finding/RK-CTR-001/2",
+      "node_type": "finding",
+      "rule_id": "RK-CTR-001",
+      "severity": "HIGH",
+      "message": "Container demo-container is privileged.",
+      "risk_score": 75
+    },
+    {
+      "id": "Finding/RK-CTR-002/3",
+      "node_type": "finding",
+      "rule_id": "RK-CTR-002",
+      "severity": "HIGH",
+      "message": "Container demo-container allows privilege escalation.",
+      "risk_score": 75
+    },
+    {
+      "id": "Finding/RK-CTR-003/4",
+      "node_type": "finding",
+      "rule_id": "RK-CTR-003",
+      "severity": "HIGH",
+      "message": "Container demo-container explicitly runs as root.",
+      "risk_score": 75
+    },
+    {
+      "id": "Finding/RK-CTR-004/5",
+      "node_type": "finding",
+      "rule_id": "RK-CTR-004",
+      "severity": "LOW",
+      "message": "Container demo-container does not explicitly use a read-only root filesystem.",
+      "risk_score": 25
+    },
+    {
+      "id": "Finding/RK-CTR-006/6",
+      "node_type": "finding",
+      "rule_id": "RK-CTR-006",
+      "severity": "LOW",
+      "message": "Container demo-container lacks an explicit CPU or memory limit.",
+      "risk_score": 25
+    },
+    {
+      "id": "Finding/RK-RBAC-001/7",
+      "node_type": "finding",
+      "rule_id": "RK-RBAC-001",
+      "severity": "HIGH",
+      "message": "RBAC rule contains wildcard permissions.",
+      "risk_score": 75
+    },
+    {
+      "id": "Finding/RK-RBAC-002/8",
+      "node_type": "finding",
+      "rule_id": "RK-RBAC-002",
+      "severity": "HIGH",
+      "message": "RBAC rule allows all verbs on all resources.",
+      "risk_score": 75
+    },
+    {
+      "id": "Finding/RK-RBAC-003/9",
+      "node_type": "finding",
+      "rule_id": "RK-RBAC-003",
+      "severity": "CRITICAL",
+      "message": "ClusterRoleBinding grants the cluster-admin role.",
+      "risk_score": 100
+    },
+    {
+      "id": "Finding/RK-RBAC-004/10",
+      "node_type": "finding",
+      "rule_id": "RK-RBAC-004",
+      "severity": "MEDIUM",
+      "message": "A binding references the default service account.",
+      "risk_score": 50
+    }
+  ],
+  "edges": [
+    {
+      "source": "Pod/redkube-demo",
+      "target": "Finding/RK-POD-001/1",
+      "relationship": "HAS_FINDING"
+    },
+    {
+      "source": "Pod/redkube-demo",
+      "target": "Finding/RK-CTR-001/2",
+      "relationship": "HAS_FINDING"
+    },
+    {
+      "source": "Pod/redkube-demo",
+      "target": "Finding/RK-CTR-002/3",
+      "relationship": "HAS_FINDING"
+    },
+    {
+      "source": "Pod/redkube-demo",
+      "target": "Finding/RK-CTR-003/4",
+      "relationship": "HAS_FINDING"
+    },
+    {
+      "source": "Pod/redkube-demo",
+      "target": "Finding/RK-CTR-004/5",
+      "relationship": "HAS_FINDING"
+    },
+    {
+      "source": "Pod/redkube-demo",
+      "target": "Finding/RK-CTR-006/6",
+      "relationship": "HAS_FINDING"
+    },
+    {
+      "source": "ClusterRole/redkube-demo-wildcard-role",
+      "target": "WildcardPermission/redkube-demo-wildcard-role/0",
+      "relationship": "GRANTS_WILDCARD_PERMISSION"
+    },
+    {
+      "source": "ClusterRole/redkube-demo-wildcard-role",
+      "target": "Finding/RK-RBAC-001/7",
+      "relationship": "HAS_FINDING"
+    },
+    {
+      "source": "ClusterRole/redkube-demo-wildcard-role",
+      "target": "Finding/RK-RBAC-002/8",
+      "relationship": "HAS_FINDING"
+    },
+    {
+      "source": "ClusterRoleBinding/redkube-demo-admin-binding",
+      "target": "ClusterRole/cluster-admin",
+      "relationship": "REFERENCES_ROLE"
+    },
+    {
+      "source": "ClusterRoleBinding/redkube-demo-admin-binding",
+      "target": "Finding/RK-RBAC-003/9",
+      "relationship": "HAS_FINDING"
+    },
+    {
+      "source": "ClusterRoleBinding/redkube-demo-admin-binding",
+      "target": "Finding/RK-RBAC-004/10",
+      "relationship": "HAS_FINDING"
+    },
+    {
+      "source": "ServiceAccount/default/default",
+      "target": "ClusterRoleBinding/redkube-demo-admin-binding",
+      "relationship": "SUBJECT_OF_BINDING"
+    }
+  ],
+  "potential_paths": [
+    {
+      "nodes": [
+        "ServiceAccount/default/default",
+        "ClusterRoleBinding/redkube-demo-admin-binding",
+        "ClusterRole/cluster-admin"
+      ],
+      "reason": "Binding references the cluster-admin role.",
+      "status": "potential_configuration_path"
+    }
+  ],
+  "errors": []
+}
