@@ -1,0 +1,12 @@
+{
+  "files_scanned": 4,
+  "total_findings": 10,
+  "severity_summary": {
+    "MEDIUM": 2,
+    "HIGH": 5,
+    "LOW": 2,
+    "CRITICAL": 1
+  },
+  "file_results": [],
+  "errors": []
+}

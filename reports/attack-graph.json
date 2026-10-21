@@ -52,6 +52,38 @@
       "node_type": "identity"
     },
     {
+      "id": "Pod/secure-demo",
+      "kind": "Pod",
+      "name": "secure-demo",
+      "namespace": "",
+      "source": "examples/secure-pod.yaml",
+      "node_type": "resource"
+    },
+    {
+      "id": "Role/default/pod-reader",
+      "kind": "Role",
+      "name": "pod-reader",
+      "namespace": "default",
+      "source": "examples/secure-rbac.yaml",
+      "node_type": "referenced_resource"
+    },
+    {
+      "id": "ServiceAccount/default/pod-reader-sa",
+      "kind": "ServiceAccount",
+      "name": "pod-reader-sa",
+      "namespace": "default",
+      "source": "examples/secure-rbac.yaml",
+      "node_type": "identity"
+    },
+    {
+      "id": "RoleBinding/default/pod-reader-binding",
+      "kind": "RoleBinding",
+      "name": "pod-reader-binding",
+      "namespace": "default",
+      "source": "examples/secure-rbac.yaml",
+      "node_type": "resource"
+    },
+    {
       "id": "Finding/RK-POD-001/1",
       "node_type": "finding",
       "rule_id": "RK-POD-001",
@@ -197,6 +229,16 @@
       "source": "ServiceAccount/default/default",
       "target": "ClusterRoleBinding/redkube-demo-admin-binding",
       "relationship": "SUBJECT_OF_BINDING"
+    },
+    {
+      "source": "ServiceAccount/default/pod-reader-sa",
+      "target": "RoleBinding/default/pod-reader-binding",
+      "relationship": "SUBJECT_OF_BINDING"
+    },
+    {
+      "source": "RoleBinding/default/pod-reader-binding",
+      "target": "Role/default/pod-reader",
+      "relationship": "REFERENCES_ROLE"
     }
   ],
   "potential_paths": [

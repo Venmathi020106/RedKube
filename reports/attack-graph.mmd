@@ -6,28 +6,34 @@ flowchart LR
   n3["ClusterRoleBinding/redkube-demo-admin-binding"]
   n4["ClusterRole/cluster-admin"]
   n5["ServiceAccount/default/default"]
-  n6["MEDIUM RK-POD-001"]
-  n7["HIGH RK-CTR-001"]
-  n8["HIGH RK-CTR-002"]
-  n9["HIGH RK-CTR-003"]
-  n10["LOW RK-CTR-004"]
-  n11["LOW RK-CTR-006"]
-  n12["HIGH RK-RBAC-001"]
-  n13["HIGH RK-RBAC-002"]
-  n14["CRITICAL RK-RBAC-003"]
-  n15["MEDIUM RK-RBAC-004"]
-  n0 -->|HAS FINDING| n6
-  n0 -->|HAS FINDING| n7
-  n0 -->|HAS FINDING| n8
-  n0 -->|HAS FINDING| n9
+  n6["Pod/secure-demo"]
+  n7["Role/default/pod-reader"]
+  n8["ServiceAccount/default/pod-reader-sa"]
+  n9["RoleBinding/default/pod-reader-binding"]
+  n10["MEDIUM RK-POD-001"]
+  n11["HIGH RK-CTR-001"]
+  n12["HIGH RK-CTR-002"]
+  n13["HIGH RK-CTR-003"]
+  n14["LOW RK-CTR-004"]
+  n15["LOW RK-CTR-006"]
+  n16["HIGH RK-RBAC-001"]
+  n17["HIGH RK-RBAC-002"]
+  n18["CRITICAL RK-RBAC-003"]
+  n19["MEDIUM RK-RBAC-004"]
   n0 -->|HAS FINDING| n10
   n0 -->|HAS FINDING| n11
+  n0 -->|HAS FINDING| n12
+  n0 -->|HAS FINDING| n13
+  n0 -->|HAS FINDING| n14
+  n0 -->|HAS FINDING| n15
   n1 -->|GRANTS WILDCARD PERMISSION| n2
-  n1 -->|HAS FINDING| n12
-  n1 -->|HAS FINDING| n13
+  n1 -->|HAS FINDING| n16
+  n1 -->|HAS FINDING| n17
   n3 -->|REFERENCES ROLE| n4
-  n3 -->|HAS FINDING| n14
-  n3 -->|HAS FINDING| n15
+  n3 -->|HAS FINDING| n18
+  n3 -->|HAS FINDING| n19
   n5 -->|SUBJECT OF BINDING| n3
+  n8 -->|SUBJECT OF BINDING| n9
+  n9 -->|REFERENCES ROLE| n7
 
   %% Potential paths are hypotheses for review, not proof of exploitation.
