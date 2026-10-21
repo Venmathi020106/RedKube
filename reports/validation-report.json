@@ -7,6 +7,89 @@
     "LOW": 2,
     "CRITICAL": 1
   },
-  "file_results": [],
+  "file_results": [
+    {
+      "file": "examples/risky-pod.yaml",
+      "finding_count": 6,
+      "findings": [
+        {
+          "rule_id": "RK-POD-001",
+          "severity": "MEDIUM",
+          "resource": "Pod/redkube-demo",
+          "message": "Non-root execution is not explicitly required."
+        },
+        {
+          "rule_id": "RK-CTR-001",
+          "severity": "HIGH",
+          "resource": "Pod/redkube-demo",
+          "message": "Container demo-container is privileged."
+        },
+        {
+          "rule_id": "RK-CTR-002",
+          "severity": "HIGH",
+          "resource": "Pod/redkube-demo",
+          "message": "Container demo-container allows privilege escalation."
+        },
+        {
+          "rule_id": "RK-CTR-003",
+          "severity": "HIGH",
+          "resource": "Pod/redkube-demo",
+          "message": "Container demo-container explicitly runs as root."
+        },
+        {
+          "rule_id": "RK-CTR-004",
+          "severity": "LOW",
+          "resource": "Pod/redkube-demo",
+          "message": "Container demo-container does not explicitly use a read-only root filesystem."
+        },
+        {
+          "rule_id": "RK-CTR-006",
+          "severity": "LOW",
+          "resource": "Pod/redkube-demo",
+          "message": "Container demo-container lacks an explicit CPU or memory limit."
+        }
+      ]
+    },
+    {
+      "file": "examples/risky-rbac.yaml",
+      "finding_count": 4,
+      "findings": [
+        {
+          "rule_id": "RK-RBAC-001",
+          "severity": "HIGH",
+          "resource": "ClusterRole/redkube-demo-wildcard-role",
+          "message": "RBAC rule contains wildcard permissions."
+        },
+        {
+          "rule_id": "RK-RBAC-002",
+          "severity": "HIGH",
+          "resource": "ClusterRole/redkube-demo-wildcard-role",
+          "message": "RBAC rule allows all verbs on all resources."
+        },
+        {
+          "rule_id": "RK-RBAC-003",
+          "severity": "CRITICAL",
+          "resource": "ClusterRoleBinding/redkube-demo-admin-binding",
+          "message": "ClusterRoleBinding grants the cluster-admin role."
+        },
+        {
+          "rule_id": "RK-RBAC-004",
+          "severity": "MEDIUM",
+          "resource": "ClusterRoleBinding/redkube-demo-admin-binding",
+          "message": "A binding references the default service account."
+        }
+      ]
+    },
+    {
+      "file": "examples/secure-pod.yaml",
+      "finding_count": 0,
+      "findings": []
+    },
+    {
+      "file": "examples/secure-rbac.yaml",
+      "finding_count": 0,
+      "findings": []
+    }
+  ],
   "errors": []
 }
