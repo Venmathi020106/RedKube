@@ -1,3 +1,4 @@
+
 """Command-line interface for RedKube."""
 
 import argparse
@@ -7,6 +8,7 @@ from pathlib import Path
 from typing import Any
 
 from redkube.graph import build_attack_graph
+from redkube.reporting.html_report import generate_html_report
 from redkube.risk import prioritize_findings
 from redkube.scanner import scan_path
 
@@ -76,6 +78,7 @@ def write_report(report: str, output: str | None) -> int:
         return 0
 
     output_path = Path(output)
+
     try:
         output_path.parent.mkdir(parents=True, exist_ok=True)
         output_path.write_text(report + "\n", encoding="utf-8")
@@ -93,19 +96,29 @@ def main() -> int:
         prog="redkube",
         description="Audit Kubernetes YAML files for security risks.",
     )
-    subparsers = parser.add_subparsers(dest="command", required=True)
+
+    subparsers = parser.add_subparsers(
+        dest="command",
+        required=True,
+    )
 
     scan_parser = subparsers.add_parser(
         "scan",
         help="Scan a YAML file or directory.",
     )
-    scan_parser.add_argument("path", help="YAML file or directory.")
+
+    scan_parser.add_argument(
+        "path",
+        help="YAML file or directory.",
+    )
+
     scan_parser.add_argument(
         "--format",
-        choices=("text", "json"),
+        choices=("text", "json", "html"),
         default="text",
         help="Report format (default: text).",
     )
+
     scan_parser.add_argument(
         "--output",
         help="Save the report to a file.",
@@ -115,7 +128,12 @@ def main() -> int:
         "graph",
         help="Build a resource relationship graph from YAML.",
     )
-    graph_parser.add_argument("path", help="YAML file or directory.")
+
+    graph_parser.add_argument(
+        "path",
+        help="YAML file or directory.",
+    )
+
     graph_parser.add_argument(
         "--output",
         help="Save graph data as JSON to this file.",
@@ -127,12 +145,34 @@ def main() -> int:
         result = scan_path(args.path)
         result["findings"] = prioritize_findings(result["findings"])
 
-        report = (
-            json.dumps(result, indent=2)
-            if args.format == "json"
-            else format_text_report(result)
-        )
-        write_status = write_report(report, args.output)
+        if args.format == "html":
+            if not args.output:
+                print(
+                    "Error: HTML format requires --output. "
+                    "Example: --output reports/security-report.html"
+                )
+                return 2
+
+            try:
+                report_path = generate_html_report(
+                    result,
+                    args.output,
+                )
+            except OSError as error:
+                print(f"Error writing HTML report: {error}")
+                return 2
+
+            print(f"HTML report saved to {report_path}")
+            write_status = 0
+
+        else:
+            report = (
+                json.dumps(result, indent=2)
+                if args.format == "json"
+                else format_text_report(result)
+            )
+
+            write_status = write_report(report, args.output)
 
         if write_status:
             return write_status

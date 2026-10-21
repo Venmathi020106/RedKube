@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RedKube Security Report</title>
+<style>
+* { box-sizing: border-box; }
+body {
+    margin: 0; background: #f3f6fa; color: #172033;
+    font-family: Arial, Helvetica, sans-serif;
+}
+header { background: #111827; color: white; padding: 28px 5%; }
+header h1 { margin: 0 0 8px; }
+header p { margin: 0; color: #cbd5e1; }
+main { max-width: 1500px; margin: auto; padding: 24px; }
+.summary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(125px, 1fr));
+    gap: 12px; margin-bottom: 22px;
+}
+.stat, .panel {
+    background: white; border: 1px solid #e2e8f0;
+    border-radius: 10px; padding: 18px;
+}
+.stat span { display: block; color: #64748b; font-size: 12px;
+    font-weight: bold; }
+.stat strong { display: block; font-size: 30px; margin-top: 8px; }
+.details { overflow-wrap: anywhere; line-height: 1.8; }
+.panel { margin-bottom: 22px; }
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+th, td { padding: 12px; text-align: left; vertical-align: top;
+    border-bottom: 1px solid #e2e8f0; }
+th { background: #f8fafc; white-space: nowrap; }
+td { min-width: 100px; overflow-wrap: anywhere; }
+.severity { display: inline-block; padding: 5px 7px;
+    border-radius: 5px; font-size: 11px; font-weight: bold; }
+.critical { background: #fee2e2; color: #991b1b; }
+.high { background: #ffedd5; color: #9a3412; }
+.medium { background: #fef3c7; color: #92400e; }
+.low { background: #e2e8f0; color: #334155; }
+.info { background: #dbeafe; color: #1e40af; }
+details { margin-top: 8px; }
+summary { cursor: pointer; color: #1d4ed8; font-weight: bold; }
+code { background: #f1f5f9; padding: 3px; }
+small { color: #64748b; }
+.empty { padding: 28px; text-align: center; }
+footer { padding: 20px; text-align: center; color: #64748b;
+    font-size: 12px; }
+@media print {
+    body { background: white; }
+    header { background: white; color: #111827;
+        border-bottom: 2px solid #111827; }
+    header p { color: #475569; }
+    main { max-width: none; padding: 8px; }
+    .panel, .stat { break-inside: avoid; }
+    details > * { display: block; }
+}
+</style>
+</head>
+<body>
+<header>
+    <h1>RedKube Security Report</h1>
+    <p>Kubernetes YAML configuration security analysis</p>
+</header>
+<main>
+    <section class="summary">
+        <div class="stat"><span>FILES SCANNED</span>
+            <strong>4</strong></div>
+        <div class="stat"><span>TOTAL FINDINGS</span>
+            <strong>10</strong></div>
+        <div class="stat"><span>CRITICAL</span><strong>1</strong></div><div class="stat"><span>HIGH</span><strong>5</strong></div><div class="stat"><span>MEDIUM</span><strong>2</strong></div><div class="stat"><span>LOW</span><strong>2</strong></div><div class="stat"><span>INFO</span><strong>0</strong></div>
+    </section>
+    <section class="panel details">
+        <h2>Scan details</h2>
+        <strong>Target:</strong> examples<br>
+        <strong>Scan errors:</strong> 0<br>
+        <strong>Analysis type:</strong> Static YAML configuration analysis
+    </section>
+    <section class="panel">
+        <h2>Security findings</h2>
+        <div class="table-wrap"><table>
+            <thead><tr>
+                <th>#</th><th>Severity / Risk</th><th>Rule</th>
+                <th>Resource</th><th>Finding details</th><th>Source file</th>
+            </tr></thead>
+            <tbody>
+        <tr>
+            <td>1</td>
+            <td><span class="severity critical">
+                CRITICAL</span><br>
+                <small>Risk: 100/100</small></td>
+            <td><code>RK-RBAC-003</code></td>
+            <td>ClusterRoleBinding/redkube-demo-admin-binding</td>
+            <td>
+                <strong>ClusterRoleBinding grants the cluster-admin role.</strong>
+                <details><summary>Evidence</summary>
+                    roleRef references ClusterRole/cluster-admin
+                </details>
+                <details><summary>Remediation</summary>
+                    Review every subject and remove cluster-wide administrator access unless explicitly required.
+                </details>
+            </td>
+            <td>examples/risky-rbac.yaml<br>
+                <small>Document 2</small></td>
+        </tr>
+        
+        <tr>
+            <td>2</td>
+            <td><span class="severity high">
+                HIGH</span><br>
+                <small>Risk: 75/100</small></td>
+            <td><code>RK-CTR-001</code></td>
+            <td>Pod/redkube-demo</td>
+            <td>
+                <strong>Container demo-container is privileged.</strong>
+                <details><summary>Evidence</summary>
+                    containers[demo-container].securityContext.privileged is true
+                </details>
+                <details><summary>Remediation</summary>
+                    Disable privileged mode unless there is a documented, tightly controlled need.
+                </details>
+            </td>
+            <td>examples/risky-pod.yaml<br>
+                <small>Document 1</small></td>
+        </tr>
+        
+        <tr>
+            <td>3</td>
+            <td><span class="severity high">
+                HIGH</span><br>
+                <small>Risk: 75/100</small></td>
+            <td><code>RK-CTR-002</code></td>
+            <td>Pod/redkube-demo</td>
+            <td>
+                <strong>Container demo-container allows privilege escalation.</strong>
+                <details><summary>Evidence</summary>
+                    containers[demo-container].securityContext.allowPrivilegeEscalation is true
+                </details>
+                <details><summary>Remediation</summary>
+                    Set allowPrivilegeEscalation: false where compatible.
+                </details>
+            </td>
+            <td>examples/risky-pod.yaml<br>
+                <small>Document 1</small></td>
+        </tr>
+        
+        <tr>
+            <td>4</td>
+            <td><span class="severity high">
+                HIGH</span><br>
+                <small>Risk: 75/100</small></td>
+            <td><code>RK-CTR-003</code></td>
+            <td>Pod/redkube-demo</td>
+            <td>
+                <strong>Container demo-container explicitly runs as root.</strong>
+                <details><summary>Evidence</summary>
+                    containers[demo-container].securityContext.runAsUser is 0
+                </details>
+                <details><summary>Remediation</summary>
+                    Use a dedicated non-root user and verify application compatibility.
+                </details>
+            </td>
+            <td>examples/risky-pod.yaml<br>
+                <small>Document 1</small></td>
+        </tr>
+        
+        <tr>
+            <td>5</td>
+            <td><span class="severity high">
+                HIGH</span><br>
+                <small>Risk: 75/100</small></td>
+            <td><code>RK-RBAC-001</code></td>
+            <td>ClusterRole/redkube-demo-wildcard-role</td>
+            <td>
+                <strong>RBAC rule contains wildcard permissions.</strong>
+                <details><summary>Evidence</summary>
+                    rules[0] has wildcard values in: verbs, resources, apiGroups
+                </details>
+                <details><summary>Remediation</summary>
+                    Replace wildcard permissions with the minimum required verbs, resources, and API groups.
+                </details>
+            </td>
+            <td>examples/risky-rbac.yaml<br>
+                <small>Document 1</small></td>
+        </tr>
+        
+        <tr>
+            <td>6</td>
+            <td><span class="severity high">
+                HIGH</span><br>
+                <small>Risk: 75/100</small></td>
+            <td><code>RK-RBAC-002</code></td>
+            <td>ClusterRole/redkube-demo-wildcard-role</td>
+            <td>
+                <strong>RBAC rule allows all verbs on all resources.</strong>
+                <details><summary>Evidence</summary>
+                    rules[0] contains verbs=[&#x27;*&#x27;] and resources=[&#x27;*&#x27;]
+                </details>
+                <details><summary>Remediation</summary>
+                    Restrict both verbs and resources to the specific operations required.
+                </details>
+            </td>
+            <td>examples/risky-rbac.yaml<br>
+                <small>Document 1</small></td>
+        </tr>
+        
+        <tr>
+            <td>7</td>
+            <td><span class="severity medium">
+                MEDIUM</span><br>
+                <small>Risk: 50/100</small></td>
+            <td><code>RK-POD-001</code></td>
+            <td>Pod/redkube-demo</td>
+            <td>
+                <strong>Non-root execution is not explicitly required.</strong>
+                <details><summary>Evidence</summary>
+                    spec.securityContext.runAsNonRoot is not true
+                </details>
+                <details><summary>Remediation</summary>
+                    Set runAsNonRoot: true and configure a compatible non-root user.
+                </details>
+            </td>
+            <td>examples/risky-pod.yaml<br>
+                <small>Document 1</small></td>
+        </tr>
+        
+        <tr>
+            <td>8</td>
+            <td><span class="severity medium">
+                MEDIUM</span><br>
+                <small>Risk: 50/100</small></td>
+            <td><code>RK-RBAC-004</code></td>
+            <td>ClusterRoleBinding/redkube-demo-admin-binding</td>
+            <td>
+                <strong>A binding references the default service account.</strong>
+                <details><summary>Evidence</summary>
+                    Subject is ServiceAccount/default; namespace=default
+                </details>
+                <details><summary>Remediation</summary>
+                    Consider a dedicated service account with narrowly scoped permissions.
+                </details>
+            </td>
+            <td>examples/risky-rbac.yaml<br>
+                <small>Document 2</small></td>
+        </tr>
+        
+        <tr>
+            <td>9</td>
+            <td><span class="severity low">
+                LOW</span><br>
+                <small>Risk: 25/100</small></td>
+            <td><code>RK-CTR-004</code></td>
+            <td>Pod/redkube-demo</td>
+            <td>
+                <strong>Container demo-container does not explicitly use a read-only root filesystem.</strong>
+                <details><summary>Evidence</summary>
+                    containers[demo-container].securityContext.readOnlyRootFilesystem is not true
+                </details>
+                <details><summary>Remediation</summary>
+                    Enable readOnlyRootFilesystem: true where the application permits it.
+                </details>
+            </td>
+            <td>examples/risky-pod.yaml<br>
+                <small>Document 1</small></td>
+        </tr>
+        
+        <tr>
+            <td>10</td>
+            <td><span class="severity low">
+                LOW</span><br>
+                <small>Risk: 25/100</small></td>
+            <td><code>RK-CTR-006</code></td>
+            <td>Pod/redkube-demo</td>
+            <td>
+                <strong>Container demo-container lacks an explicit CPU or memory limit.</strong>
+                <details><summary>Evidence</summary>
+                    containers[demo-container].resources.limits does not specify both cpu and memory
+                </details>
+                <details><summary>Remediation</summary>
+                    Define appropriate CPU and memory limits based on workload testing.
+                </details>
+            </td>
+            <td>examples/risky-pod.yaml<br>
+                <small>Document 1</small></td>
+        </tr>
+        </tbody>
+        </table></div>
+    </section>
+    
+</main>
+<footer>
+    Generated by RedKube. Findings cover implemented rules only;
+    they do not confirm exploitation or compromise.
+</footer>
+</body>
+</html>
